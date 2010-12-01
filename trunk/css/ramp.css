@@ -1,0 +1,192 @@
+html body {
+	margin:             0;
+	border:             0;
+	padding:            0;
+	width:              100%;
+	height:             100%;
+}
+
+body {
+	overflow:				hidden;
+	z-index:					1;
+	font-family:			"Times New Roman", Georgia, Serif;
+	background-color:		#FFEEDD;
+}
+
+#header {
+	position:		fixed;
+	top:				0%;
+	left:				15%;
+	right:			15%;
+	height:			15%;
+	font-size: 		2em;
+	font-style: 	italic;
+	color:      	#FF9900;
+	font-weight: 	bolder;
+	background-color:  #6599FF;
+}
+
+#headerLogo { 
+	width:			170px; 
+	height:			60px;
+	background:		url(../imgs/logo.gif) no-repeat;
+	padding-right: 5%;
+	float: 			left;
+}
+
+#footer {
+	position:		fixed;
+	clear:			both;
+	top:				85%;
+	left:				15%;
+	right:			15%;
+	background-color: #6599FF; 
+}
+
+#footer .text { 
+	color:			#DD1100;
+	font-family: 	Arial, Helvetica, Sans-Serif; 
+	font-weight:	bold; 
+	font-size: 		75%;
+}
+
+#footer a { 
+	font-size: 			1em;
+	text-decoration:	none; 
+	outline-style:		none;	
+}
+
+#copyright {
+	color:	#aa2200;
+	width:	40%; 
+	height:	1em;
+	float:	left;
+	padding-left:	2%;
+}
+
+#contactinfo { 
+	float:	right; 
+	width:	40%;
+	color:	#EE0000;
+}
+
+#validator {
+	clear:	both;
+}
+
+#validator  span {
+	float:	left;
+	height;	"31px";
+	width:	"88px";
+}
+
+#updatetime {
+	clear:		both;
+	font-size: 	45%;
+	color:		#DD1100;
+	padding-left:	2%;
+}
+
+#navmenu {
+	position:	absolute;
+	clear: 		both;
+	top:			2em;
+	left:			20%;
+	width:		80%;
+	height: 		3em;
+	font-size: 	45%;
+}
+
+#navmenu ul {
+	font-family:	"Courier New",  Courier,  monospace;
+	font-size: 		75%;
+	font-style: 	normal;
+	z-index:			50;
+}
+
+#navmenu ul li {
+	list-style:		none; 
+	text-align: 	center;
+	width:			7em;
+	z-index:			50;
+	float:			left;
+	background-color: #99FF33;
+	border:			1px solid blue;
+}
+
+#navmenu a {
+	text-decoration:	none; 
+	outline-style:		none;	
+}
+
+#leftside {
+	position:		fixed;
+	top:				0%;
+	left: 			0%;
+	width: 			15%;
+	height: 			100%;
+	background-attachment:fixed;
+	background:	#FFEEDD url('../imgs/bkleft.png') repeat-y;
+	background-position: right;
+}
+
+#rightside {
+	position:		fixed;
+	top:				0%;
+	right: 			0%;
+	width: 			15%;
+	height: 			100%;
+	background-attachment:fixed;
+	background:	#FFEEDD url('../imgs/bkright.png') repeat-y;
+	background-position: left;
+}
+
+#center {
+	position:		fixed;
+	clear:			both;
+	overflow: 		auto;
+	top:				15%;
+	left:				15%;
+	right:			15%;
+	height:			70%;
+	background-color:	#6599FF; 
+}
+
+#content {
+	position: 	absolute;
+	top:			0%;
+	left:			5%;
+	right:		1%;
+	color: 		red;
+}
+
+#image {
+	float: 	left;
+	width: 	250px;
+	height: 	187px;
+}
+
+br.noimagelst {
+	clear:	both;
+}
+	
+a:link {
+	color:             #666600;
+	text-decoration:   none; 
+} 
+
+a:active {
+	color:             #FF0000; 
+	text-decoration:   none; 
+} 
+
+a:visited	{
+	color:             #000066; 
+	text-decoration:   none; 
+}
+
+a:hover {
+	color:             #666600; 
+	text-decoration:   none; 
+	outline:           outset  brown;
+}
