@@ -21,6 +21,10 @@ DROP TABLE IF EXISTS tblCompanyType;
 DROP TABLE IF EXISTS tblContact;
 DROP TABLE IF EXISTS tblCompanyLogin;
 DROP TABLE IF EXISTS tblCompany;
+DROP TABLE IF EXISTS tblEquipMillDetail;
+DROP TABLE IF EXISTS tblEquipMillLathe;
+DROP TABLE IF EXISTS tblEquipSwissDetail;
+DROP TABLE IF EXISTS tblEquipsList;
 
 CREATE TABLE tblCompany
 (
@@ -261,3 +265,44 @@ CREATE TABLE tblEmployee
     CONSTRAINT uc_EmployeeEmail UNIQUE (chrEmail),
     CONSTRAINT ucEmployeeUsername UNIQUE (chrUserName)
 );
+
+CREATE TABLE tblEquipMillDetail
+{
+    idsMachineID   INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
+    iQuantity      INT UNSIGNED,
+    fXAxis         DOUBLE UNSIGNED,
+    fYAxis         DOUBLE UNSIGNED,
+    fZAxis         DOUBLE UNSIGNED,
+    b4thAxis       BOOLEAN default YES,
+    iTaper         INT UNSIGNED,
+    PRIMARY KEY (idsEmployeeID)
+};
+
+CREATE TABLE tblEquipMillLathe
+{
+    idsMachineID   INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
+    iQuantity      INT UNSIGNED,
+    iChuckSize     INT UNSIGNED,
+    iMaxSwing      INT UNSIGNED,
+    bTailStock     BOOLEAN default YES,
+    iDistBtwCen    INT UNSIGNED,
+    PRIMARY KEY (idsEmployeeID)
+};
+
+CREATE TABLE tblEquipSwissDetail
+{
+    idsMachineID   INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
+    iQuantity      INT UNSIGNED,
+    fMax           DOUBLE UNSIGNED,
+    iAxis          INT UNSIGNED,
+    chrDetail1     VARCHAR(32),
+    chrDetail2     VARCHAR(32),
+    PRIMARY KEY (idsEmployeeID)
+};
+
+DROP TABLE IF EXISTS tblEquipsList
+{
+    id              INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
+    iType           INT UNSIGNED NOT NULL,
+    idsMachineID    INT(6) UNSIGNED NOT NULL
+};

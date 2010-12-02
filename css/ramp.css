@@ -169,7 +169,41 @@ body {
 br.noimagelst {
 	clear:	both;
 }
-	
+
+table {
+	margin-top: 				2em;
+	width:							90%;
+	border-collapse:		collapse;
+	font-family:				"Courier New",  Courier,  monospace;
+}
+
+caption {
+	font-size:			1.2em;
+	font-weight: 	bolder;
+}
+
+table, th, td{
+	border:				2px solid red;
+	color: 				#AA1111;
+	background-color: #11AA00;
+}
+
+td {
+	padding-left: 		1em;	
+}
+
+th {
+	height:	3em;
+	width:		4em;
+}
+
+img.homebk {
+	width:			500px;
+	height: 		300px;
+	padding-top:		4%;
+	padding-left:	20%;
+}
+
 a:link {
 	color:             #666600;
 	text-decoration:   none; 
