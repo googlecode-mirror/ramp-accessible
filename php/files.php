@@ -23,9 +23,9 @@
 					<li><a href="../index.html" alt="home">HOME</a></li>
 					<li><a href="../equipment.html" alt="EQUIPMENT">EQUIPMENT</a></li>
 					<li><a href="../sample.html" alt="SAMPLE">SAMPLE</a></li>
-					<li><a href="index.html" alt="HISTORY">HISTORY</a></li>
-					<li><a href="index.html" alt="FAQ">FAQ</a></li>
-					<li><a href="index.html" alt="CONTACT US">CONTACT US</a></li>
+					<li><a href="../history.html" alt="HISTORY">HISTORY</a></li>
+					<li><a href="../FAQ.html" alt="FAQ">FAQ</a></li>
+					<li><a href="contactus.php" alt="CONTACT US">CONTACT US</a></li>
 					<li><a href="index.html" alt="LOG IN">LOG IN</a></li>
 				</ul>
 			</div>
