@@ -2,12 +2,15 @@
 <html>
    <head>
         <meta http-equiv="Content-Type" content="text/html charset=utf-8">
-	<link rel="stylesheet" href="css/ramp.css" type="text/css">
-	<link rel="shortcut icon" href="imgs/icon/ramp.ico">
+	<link rel="stylesheet" href="../css/ramp.css" type="text/css">
+	<link rel="shortcut icon" href="../imgs/icon/ramp.ico">
 	<title>Contact Us</TITLE>
    </head>
    <body>
 	<div id="wrapper">
+	    <div id="leftside"><img src ="../imgs/bk_2.png" style = "height:60%; width: 100%"></img></div>
+            <div id="rightside"><img src ="../imgs/bk_3.png" style = "height:60%; width: 100%"></img></div>
+
             <div id="header">
                 <span id="headerLogo"></span><span>RAMP Engineering Inc.</span>			
             </div>
@@ -28,38 +31,39 @@
                 <div id="content">   
    		     <h2 class="title">CONTACT US</h2>
    		     <?php
-			$dbhost = 'infoserver.cecs.csulb.edu';
-			$username = 'tnguyenc';
-			$password = 'oh3bizai';
-			$dbname = $username;
-			$conn = mysql_connect($dbhost, $username, $password);
-			if (!$conn)
-			{
-			   die('Could not connect: '.mysql_error());
-			}
-			mysql_select_db($dbname) or die (mysql_error());
-		
-			//Select all contacts from RAMP Engineering company
-			$query = "SELECT * FROM tblContact";
-			$query .= "INNER JOIN tblCompany USING (idsCompanyID)";
-			$query .= "WHERE tblCompany.chrName = 'RAMP Engineering'";
-			$result = mysql_query($query, $conn) or die(mysql_error());
-			$row = mysql_fetch_array($result);
-			//Display a list of RAMP Engineering's contact information
-			while ($row = mysql_fetch_array($result))
-			{
-			    echo "Department: " .$row['chrDepartmentName'];
-			    echo "<br/>";
-			    echo "Employee: " .$row['chrFirstName'] . " " .$row['chrLastName'];
-			    echo "<br/>";
-			    echo "Phone: " .$row['chrPhone'];
-			    echo "<br/>";
-			    echo "Email: " .$row['chrEmail'];
-			    echo "<br/>";
-			    echo "Fax: " .$row['chrFax'];
-			    echo "<br/>";
-			}
-
+				$dbhost = "infoserver.cecs.csulb.edu";
+				$username = "nscott";
+				$password = "egiJ4rai";
+				$dbname = $username;
+				$conn = mysql_connect($dbhost, $username, $password);
+				if (!$conn)
+				{
+				   die('Could not connect: '.mysql_error());
+				}
+				mysql_select_db($dbname) or die (mysql_error());
+			
+				//Select all contacts from RAMP Engineering company
+				$query = "SELECT * FROM tblContact ";
+				$query .= "INNER JOIN tblCompany USING (idsCompanyID) ";
+				$query .= "WHERE tblCompany.chrName = 'RAMP Engineering Inc.' ";
+				$query .= "ORDER BY chrDepartment";
+				$result = mysql_query($query, $conn) or die(mysql_error());
+				//Display a list of RAMP Engineering's contact information
+				while ($row = mysql_fetch_array($result))
+				{
+					echo "<p>";
+					echo "Department: " .$row['chrDepartment'];
+					echo "<br/>";
+					echo "Employee: " .$row['chrFirstName'] . " " .$row['chrLastName'];
+					echo "<br/>";
+					echo "Phone: " .$row['chrPhone'];
+					echo "<br/>";
+					echo "Email: " .$row['chrEmail'];
+					echo "<br/>";
+					echo "Fax: " .$row['chrFax'];
+					echo "<br/>";
+					echo "</p>";
+				}
 		     ?>
 		</div>
 	    </div>
