@@ -1,4 +1,191 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<?php                  
+    function validate()
+    {
+        $errors = "";
+        if($_POST['customer'] == "Select a Customer...")
+            $errors .= "Please select a Customer<br />";
+            
+        if($_POST['partNumber'] == "Select a Part Number...")
+            $errors .= "Please select a Part Number<br />";
+        
+        if($_POST['revision'] == "Select a Revision...")
+            $errors .= "Please select a Revision<br />";
+            
+        if($_POST['operation'] == "Select an Operation...")
+            $errors .= "Please select an Operation<br />";
+            
+        if($_POST['machine'] == "Select a Machine...")
+            $errors .= "Please select a Machine<br />";
+            
+        if($_POST['submit'] == "Upload")
+            if(!$_FILES['codeFile']['name'] && !$_FILES['geometryFile']['name'])
+            {                
+                $errors .= "At least one file must be selected for uploading<br />";
+            }
+        
+        return $errors;
+    }
+    if($_POST['submit'])
+    {
+        $errors = validate();
+        
+        if(strlen($errors) > 0)
+        {
+            echo "<STRONG>Cannot perform file transfer!</STRONG><BR>";
+            echo "The following errors occurred:<BR><div style=\"color: red\">".$errors."</div>";
+            echo "<a href=\"files.php\" alt=\"Go Back\">Go Back</a>";
+        }
+        else
+        {
+            if($_POST['submit'] == "Download")
+            {          
+                mysql_connect('infoserver.cecs.csulb.edu','nscott','egiJ4rai') or die(mysql_error());
+                mysql_select_db('nscott') or die(mysql_error());              
+                            
+                $query = "SELECT idsProgramRevisionID AS id, chrCodeFiles, chrGeometryFiles ";
+                $query .= "FROM tblProgramRevision pr ";
+                $query .= "INNER JOIN tblProgram p USING (idsProgramID) ";
+                $query .= "INNER JOIN tblMachine m USING (idsMachineID) ";
+                $query .= "INNER JOIN tblOperation op USING (idsOperationID) ";
+                $query .= "INNER JOIN tblOperationNumber opn USING (idsOperationNumberID) ";
+                $query .= "INNER JOIN tblPart prt USING (idsPartID) ";
+                $query .= "INNER JOIN tblRevision r USING (idsRevisionID) ";
+                $query .= "INNER JOIN tblCompany c USING (idsCompanyID) ";
+                $query .= "WHERE c.chrName = '".$_POST['customer']."' ";
+                $query .= "AND prt.chrPartNumber = '".$_POST['partNumber']."' ";
+                $query .= "AND r.chrRevision = '".$_POST['revision']."' ";
+                $query .= "AND opn.intOperationNumber = ".$_POST['operation']." ";
+                $query .= "AND m.chrMachineName = '".$_POST['machine']."' ";
+                $query .= "AND pr.intProgramRevision = p.intCurrentRevision";
+                
+                $result = mysql_query($query);
+                $programRevision = mysql_fetch_array($result);                            
+                
+                if($_POST['whichFile'] == "Code")
+                {
+                    $filename = $programRevision['chrCodeFiles'];
+                    $filepath = "/net/d1/u7/s/nscott/Programs/".$programRevision['id']."/Code/".$filename;
+                }
+                else
+                {
+                    $filename = $programRevision['chrGeometryFiles'];
+                    $filepath = "/net/d1/u7/s/nscott/Programs/".$programRevision['id']."/Geometry/".$filename;
+                }
+                // Download the code file
+                if($filename != "") // TODO check for null also
+                {
+                    // Extract the type of file which will be sent to the browser as a header
+                    $type = filetype($filepath);
+                    
+                    // Get a date and timestamp
+                    $today = date("F j, Y, g:i a");
+                    $time = time();
+                    
+                    // Send file headers
+                    header("Content-type: $type");
+                    header("Content-Disposition: attachment;filename=".$filename);
+                    header("Content-Transfer-Encoding: binary");
+                    header('Pragma: no-cache');
+                    header('Expires: 0');
+                    
+                    // Send the file contents.
+                    set_time_limit(0);
+                    //flush();
+                    readfile($filepath);
+                    exit;
+                }
+                else
+                {
+                    echo "<p>There is no file for ".$_POST['whichFile']."</p>";
+                }
+            }
+            else
+            {
+                // Upload files
+                mysql_connect('infoserver.cecs.csulb.edu','nscott','egiJ4rai') or die(mysql_error());
+                mysql_select_db('nscott') or die(mysql_error());
+                
+                $query = "SELECT pr.idsProgramID as id, pr.intProgramRevision AS rev ";
+                $query .= "FROM tblProgramRevision pr ";
+                $query .= "INNER JOIN tblProgram p USING (idsProgramID) ";
+                $query .= "INNER JOIN tblMachine m USING (idsMachineID) ";
+                $query .= "INNER JOIN tblOperation op USING (idsOperationID) ";
+                $query .= "INNER JOIN tblOperationNumber opn USING (idsOperationNumberID) ";
+                $query .= "INNER JOIN tblPart prt USING (idsPartID) ";
+                $query .= "INNER JOIN tblRevision r USING (idsRevisionID) ";
+                $query .= "INNER JOIN tblCompany c USING (idsCompanyID) ";
+                $query .= "WHERE c.chrName = '".$_POST['customer']."' ";
+                $query .= "AND prt.chrPartNumber = '".$_POST['partNumber']."' ";
+                $query .= "AND r.chrRevision = '".$_POST['revision']."' ";
+                $query .= "AND opn.intOperationNumber = ".$_POST['operation']." ";
+                $query .= "AND m.chrMachineName = '".$_POST['machine']."' ";
+                $query .= "AND pr.intProgramRevision = p.intCurrentRevision";
+                
+                //echo "<br />Query: ".$query;
+                
+                $result = mysql_query($query);
+                $programRevision = mysql_fetch_array($result);
+                
+                $nextRev = $programRevision['rev'] + 1;
+                
+                //echo "<br />NextRev: ".$nextRev;
+                //echo "<br />ID: ".$programRevision['id'];
+               
+                $insert = "INSERT INTO tblProgramRevision (idsProgramID) VALUES (".$programRevision['id'].")";               
+                //echo "<br />Insert: ".$insert;
+                mysql_query($insert);
+                
+                // Upload the files to the server
+                if($_FILES['codeFile']['name'] != "")
+                {   
+                    $codeDest = "/net/d1/u7/s/nscott/Programs/".mysql_insert_id()."/Code/".basename($_FILES['codeFile']['name']);                   
+                    
+                    echo "<br />Code File: ".$codeDest;
+                    mkdir("/net/d1/u7/s/nscott/Programs/".mysql_insert_id());
+                    mkdir("/net/d1/u7/s/nscott/Programs/".mysql_insert_id()."/Code/");
+                    // Transfer the temporary file on the server to 
+                    // its new destination
+                    if(move_uploaded_file($_FILES['codeFile']['tmp_name'], $codeDest))
+                        $errors .= "Code file upload failure.";
+                    else
+                        $errors .= "Code file upload success.";
+                }
+                if($_FILES['geometryFile']['name'] != "")
+                {
+                    $geoDest = "/net/d1/u7/s/nscott/Programs/".mysql_insert_id()."/Geometry/".basename($_FILES['geometryFile']['name']);
+                    
+                    echo "<br />Geo File: ".$geoDest;
+                    if(!file_exists("/net/d1/u7/s/nscott/Programs/".mysql_insert_id()))
+                        mkdir("/net/d1/u7/s/nscott/Programs/".mysql_insert_id());
+                    mkdir("/net/d1/u7/s/nscott/Programs/".mysql_insert_id()."/Geometry/");  
+                    // Transfer the temporary file on the server to 
+                    // its new destination
+                    if(move_uploaded_file($_FILES['geometryFile']['tmp_name'], $geoDest))
+                        $errors .= "Geometry file upload failure.";
+                    else
+                        $errors .= "Geometry file upload success.";
+                }
+                $revID = mysql_insert_id();
+                
+                $update = "UPDATE tblProgramRevision ";
+                $update .= "SET idsProgramID = ".$programRevision['id'].", ";
+                $update .= "intProgramRevision = ".$nextRev.", ";
+                $update .= "chrCodeFiles = '".basename($_FILES['codeFile']['name'])."', ";
+                $update .= "chrGeometryFiles = '".basename($_FILES['geometryFile']['name'])."' ";
+                $update .= "WHERE idsProgramRevisionID = ".$revID;
+                
+                echo "<br />Update ".$update;
+                
+                mysql_query($update);
+                
+                echo $errors."<br />";
+            }
+        }
+    }
+    else
+    {
+?>
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html charset=utf-8">
@@ -34,153 +221,7 @@
                 <div id="content">
                     <h3 style="padding:0; margin:.2em;">File Upload/Download</h3>
                     
-                    <?php
-                        function validate()
-                        {
-                            $errors = "";
-                            if($_POST['customer'] == "Please select a Customer...")
-                                $errors .= "Please select a Customer<br />";
-                                
-                            if($_POST['partNumber'] == "Please select a Part Number...")
-                                $errors .= "Please select a Part Number<br />";
-                            
-                            if($_POST['revision'] == "Please select a Revision...")
-                                $errors .= "Please select a Revision<br />";
-                                
-                            if($_POST['operation'] == "Please select an Operation...")
-                                $errors .= "Please select an Operation<br />";
-                                
-                            if($_POST['machine'] == "Please select a Machine...")
-                                $errors .= "Please select a Machine<br />";
-                                
-                            if($_POST['submit'] == "Upload")
-                                if(!$_POST['ofdCodeFile'] && !$_POST['ofdGeometryFile'])
-                                    $errors .= "At least one file must be selected for uploading<br />";
-                            
-                            return $errors;
-                        }
-                        if($_POST['submit'])
-                        {
-                            $errors = validate();
-                            
-                            if(strlen($errors) > 0)
-                            {
-                                echo "<STRONG>Cannot perform file transfer!</STRONG><BR>";
-                                echo "The following errors occurred:<BR><div style=\"color: red\">".$errors."</div>";
-                            }
-                            else
-                            {
-                                echo "<p>File transfer under way...</p>";
-                                
-                                if($_POST['submit'] == "Upload")
-                                {
-                                    //TODO get the programRevisionID
-                                    mysql_connect('infoserver.cecs.csulb.edu','nscott','egiJ4rai') or die(mysql_error());
-                                    mysql_select_db('nscott') or die(mysql_error());
-                                    
-                                    $query = "SELECT idsProgramRevisionID AS id FROM tblProgramRevision pr ";
-                                    $query .= "INNER JOIN tblProgram p USING (idsProgramID) ";
-                                    $query .= "INNER JOIN tblMachine m USING (idsMachineID) ";
-                                    $query .= "INNER JOIN tblOperation op USING (idsOperationID) ";
-                                    $query .= "INNER JOIN tblOperationNumber opn USING (idsOperationNumberID) ";
-                                    $query .= "INNER JOIN tblPart prt USING (idsPartID) ";
-                                    $query .= "INNER JOIN tblRevision r USING (idsRevisionID) ";
-                                    $query .= "INNER JOIN tblCompany c USING (idsCompanyID) ";
-                                    $query .= "WHERE c.chrName = \'".$_POST['customer']."\' ";
-                                    $query .= "AND prt.chrPartNumber = \'".$_POST['partNumber']."\' ";
-                                    $query .= "AND r.chrRevision = \'".$_POST['revision']."\' ";
-                                    $query .= "AND opn.intOperationNumber = ".$_POST['operation']." ";
-                                    $query .= "AND m.chrMachineName = \'".$_POST['machine']."\' ";
-                                    
-                                    $result = mysql_query($query);
-                                    $programRevision = mysql_fetch_array($result);
-                                    
-                                    // Upload the files to the server
-                                    if($_POST['ofdCodeFile'])
-                                    {   
-                                        $codeDest = "Programs/Code/".$programRevision['id'].basename($_FILES['ofdCodeFile']['name'])
-                                        
-                                        if (mkdir($codeDest, 0777, true))
-                                        {
-                                            // Transfer the temporary file on the server to 
-                                            // its new destination
-                                            if(move_uploaded_file($_FILES['ofdCodeFile']['tmp_name'], $codeDest))
-                                                $errors .= "Code file upload failure.";
-                                            else
-                                                $errors .= "Code file upload success.";
-                                        }
-                                        else
-                                        {
-                                            $errors .= "Code file upload failure";
-                                        }
-                                    }
-                                    if($_POST['ofdGeometryFile'])
-                                    {
-                                        $geoDest = "Programs/Geometry/".$programRevision['id'].basename($_FILES['ofdGeometryFile']['name'])
-                                        
-                                        if (mkdir($geoDest, 0777, true))
-                                        {   
-                                            // Transfer the temporary file on the server to 
-                                            // its new destination
-                                            if(move_uploaded_file($_FILES['ofdGeometryFile']['tmp_name'], $geoDest))
-                                                $errors .= "Geometry file upload failure.";
-                                            else
-                                                $errors .= "Geometry file upload success.";
-                                        }
-                                        else
-                                        {
-                                            $errors .= "Geometry file upload failure";
-                                        }
-                                    }
-                                    
-                                    echo $errors."<br />";
-                                }
-                                else
-                                {                                    
-                                    //TODO get the programRevisionID
-                                    mysql_connect('infoserver.cecs.csulb.edu','nscott','egiJ4rai') or die(mysql_error());
-                                    mysql_select_db('nscott') or die(mysql_error());
-                                                                        
-                                    $query = "SELECT idsProgramRevisionID AS id, chrCodeFiles, chrGeometryFiles "
-                                    $query .= "FROM tblProgramRevision pr ";
-                                    $query .= "INNER JOIN tblProgram p USING (idsProgramID) ";
-                                    $query .= "INNER JOIN tblMachine m USING (idsMachineID) ";
-                                    $query .= "INNER JOIN tblOperation op USING (idsOperationID) ";
-                                    $query .= "INNER JOIN tblOperationNumber opn USING (idsOperationNumberID) ";
-                                    $query .= "INNER JOIN tblPart prt USING (idsPartID) ";
-                                    $query .= "INNER JOIN tblRevision r USING (idsRevisionID) ";
-                                    $query .= "INNER JOIN tblCompany c USING (idsCompanyID) ";
-                                    $query .= "WHERE c.chrName = \'".$_POST['customer']."\' ";
-                                    $query .= "AND prt.chrPartNumber = \'".$_POST['partNumber']."\' ";
-                                    $query .= "AND r.chrRevision = \'".$_POST['revision']."\' ";
-                                    $query .= "AND opn.intOperationNumber = ".$_POST['operation']." ";
-                                    $query .= "AND m.chrMachineName = \'".$_POST['machine']."\' ";
-                                    
-                                    $result = mysql_query($query);
-                                    $programRevision = mysql_fetch_array($result);
-                                    
-                                    // Download the code file
-                                    if($programRevision['chrCodeFiles'] != "") // TODO check for null also
-                                    {
-                                        $filepath = "Programs/Code/".$programRevision['id']."/".$programRevision['chrCodeFiles'];
-                                        flush();
-                                        readfile($filepath);
-                                    }
-                                    
-                                    //Download the geometry file
-                                    if($programRevision['chrGeometryFiles'] != "") // TODO check for null also
-                                    {
-                                        $filepath = "Programs/Geometry/".$programRevision['id']."/".$programRevision['chrGeometryFiles'];
-                                        flush();
-                                        readfile($filepath);
-                                    }
-                                    
-                                }
-                            }
-                        }
-                        else
-                        {
-                    ?>
+                    
                     
                     <p>What would you like to do?
                     <br />
@@ -295,8 +336,6 @@
                                 {
                                     echo "<option>".$row['chrMachineName']."</option>";
                                 }
-                                
-                            } // end of else
                             ?>
                         </select>
                         <span id="machineMessage" class="error">Please select a Machine</span>
@@ -310,9 +349,16 @@
                         <input type="file" id="ofdGeometryFile" name="geometryFile" size="40"></input>
                         <br />
                         
+                        <select id="cboWhichFile" name="whichFile" style="position: relative;left:-10%">
+                            <option>Code</option>
+                            <option>Geometry</option>
+                        </select>
                         
-                        <input type="submit" id="btnSubmit" name="submit" value="Submit" style="font-size: .8em; margin-left:18%"></input>
+                        <input type="submit" id="btnSubmit" name="submit" value="Submit" style="font-size: .8em; position:relative; left:-10%;"></input>
                     </form>
+                    <?php
+                        } // end of else
+                    ?>
                 </div>
             </div>
         </div>
