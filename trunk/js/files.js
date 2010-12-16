@@ -1,3 +1,4 @@
+
 var downloadElements = new Array();
 downloadElements[0] = "lblCustomer";
 downloadElements[1] = "cboCustomer";
@@ -9,6 +10,7 @@ downloadElements[6] = "lblOperation";
 downloadElements[7] = "cboOperation";
 downloadElements[8] = "lblMachine";
 downloadElements[9] = "cboMachine";
+downloadElements[10] = "cboWhichFile";
 
 var uploadElements = new Array();
 uploadElements[0] = "lblCodeFile";
@@ -23,9 +25,8 @@ errorElements[2] = "revisionMessage";
 errorElements[3] = "operationMessage";
 errorElements[4] = "machineMessage";
 
-
 function body_OnLoad()
-{
+{    
 	var element;
 	
 	document.getElementById('message').style.visibility = "hidden";
@@ -69,6 +70,8 @@ function chooseUpload_Click()
 	
 	for (element in uploadElements)
         document.getElementById(uploadElements[element]).style.visibility = "visible";
+        
+    document.getElementById('cboWhichFile').style.visibility = "hidden";
 	
 	document.getElementById('btnSubmit').style.visibility = "visible";	
 	document.getElementById('btnSubmit').value = "Upload";
@@ -114,6 +117,7 @@ function validate()
             if(document.getElementById('ofdCodeFile').value = "")
                 valid = false;
         
-    return valid;
+    return true;
 }
+
 
