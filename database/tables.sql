@@ -1,4 +1,4 @@
-﻿/* File: tables.sql - Creates all the tables for RAMP Database in MYSQL */
+/* File: tables.sql - Creates all the tables for RAMP Database in MYSQL */
 
 DROP TABLE IF EXISTS tblEmployee;
 DROP TABLE IF EXISTS tblJobShipDate;
@@ -116,7 +116,7 @@ CREATE TABLE tblJob
     idsJobNumber        INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
     idsPartID           INT(6) UNSIGNED,
     chrPONumber         VARCHAR(20),
-    dtmDateReceived     DATETIME,
+    dtmDateReceived     VARCHAR(20),
     curPiecePrice       DECIMAL (8,2) UNSIGNED,
     blnShipped          BOOLEAN,
     blnReleased         BOOLEAN,
@@ -129,7 +129,7 @@ CREATE TABLE tblJobDueDate
 (
     idsJobDueDateID     INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
     idsJobNumber        INT(6) UNSIGNED,    
-    dtmDueDate          DATETIME,
+    dtmDueDate          VARCHAR(20),
     intQuantity         INT(5) UNSIGNED,
     PRIMARY KEY (idsJobDueDateID),
     FOREIGN KEY (idsJobNumber) REFERENCES tblJob (idsJobNumber)
@@ -139,7 +139,7 @@ CREATE TABLE tblJobShipDate
 (
     idsJobShipDateID    INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
     idsJobNumber        INT(6) UNSIGNED,
-    dtmDate             DATETIME,
+    dtmDate             VARCHAR(20),
     intNewParts         INT(5) UNSIGNED,
     intFromInventory    INT(5) UNSIGNED,
     PRIMARY KEY (idsJobShipDateID),
@@ -242,7 +242,7 @@ CREATE TABLE tblProgramRevision
     idsProgramRevisionID    INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
     idsProgramID            INT(6) UNSIGNED NOT NULL,
     intProgramRevision      INT(2) UNSIGNED NOT NULL,
-    dtmRevisionDate         DATETIME,
+    dtmRevisionDate         VARCHAR(20),
     chrCycleTime            VARCHAR(9),
     chrStatus               VARCHAR(8),
     chrCodeFiles            VARCHAR(80),
