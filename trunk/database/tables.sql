@@ -1,4 +1,4 @@
-/* File: tables.sql - Creates all the tables for RAMP Database in MYSQL */
+﻿/* File: tables.sql - Creates all the tables for RAMP Database in MYSQL */
 
 DROP TABLE IF EXISTS tblEmployee;
 DROP TABLE IF EXISTS tblJobShipDate;
@@ -64,6 +64,7 @@ CREATE TABLE tblContact
     chrPhone        VARCHAR(15),
     chrFax          VARCHAR(15),
     chrEmail        VARCHAR(40),
+    chrDepartment   VARCHAR(40),
     PRIMARY KEY (idsContactID),
     FOREIGN KEY (idsCompanyID) REFERENCES tblCompany (idsCompanyID),
     CONSTRAINT uc_Name UNIQUE (idsCompanyID, chrFirstName, chrLastName)
@@ -119,6 +120,7 @@ CREATE TABLE tblJob
     curPiecePrice       DECIMAL (8,2) UNSIGNED,
     blnShipped          BOOLEAN,
     blnReleased         BOOLEAN,
+    intComplete         INT(3),
     PRIMARY KEY (idsJobNumber),
     FOREIGN KEY (idsPartID) REFERENCES tblPart (idsPartID)
 );
@@ -262,47 +264,6 @@ CREATE TABLE tblEmployee
     chrPassword     VARCHAR(15),
     PRIMARY KEY (idsEmployeeID),
     CONSTRAINT uc_Employee UNIQUE (chrFirstName, chrLastName, chrEmail),
-    CONSTRAINT uc_EmployeeEmail UNIQUE (chrEmail),
     CONSTRAINT ucEmployeeUsername UNIQUE (chrUserName)
 );
 
-CREATE TABLE tblEquipMillDetail
-{
-    idsMachineID   INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-    iQuantity      INT UNSIGNED,
-    fXAxis         DOUBLE UNSIGNED,
-    fYAxis         DOUBLE UNSIGNED,
-    fZAxis         DOUBLE UNSIGNED,
-    b4thAxis       BOOLEAN default YES,
-    iTaper         INT UNSIGNED,
-    PRIMARY KEY (idsEmployeeID)
-};
-
-CREATE TABLE tblEquipMillLathe
-{
-    idsMachineID   INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-    iQuantity      INT UNSIGNED,
-    iChuckSize     INT UNSIGNED,
-    iMaxSwing      INT UNSIGNED,
-    bTailStock     BOOLEAN default YES,
-    iDistBtwCen    INT UNSIGNED,
-    PRIMARY KEY (idsEmployeeID)
-};
-
-CREATE TABLE tblEquipSwissDetail
-{
-    idsMachineID   INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-    iQuantity      INT UNSIGNED,
-    fMax           DOUBLE UNSIGNED,
-    iAxis          INT UNSIGNED,
-    chrDetail1     VARCHAR(32),
-    chrDetail2     VARCHAR(32),
-    PRIMARY KEY (idsEmployeeID)
-};
-
-DROP TABLE IF EXISTS tblEquipsList
-{
-    id              INT(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-    iType           INT UNSIGNED NOT NULL,
-    idsMachineID    INT(6) UNSIGNED NOT NULL
-};
