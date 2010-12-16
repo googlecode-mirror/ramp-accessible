@@ -44,25 +44,52 @@
 					<FORM>	
 						<p id="message" style="font-weight: bold;">Select the Program information:</p>
 						
+						<?php
+							// Connect to database
+							mysql_connect('infoserver.cecs.csulb.edu','nscott','egiJ4rai') or die(mysql_error());
+							mysql_select_db('nscott') or die(mysql_error());
+							
+							// Get Customers
+							$query = "SELECT chrName FROM tblCompany c ";
+							$query .= "INNER JOIN tblCompany_CompanyType cct ";
+							$query .= "ON c.idsCompanyID = cct.idsCompanyID ";
+							$query .= "INNER JOIN tblCompanyType ct ";
+							$query .= "ON cct.idsCompanyTypeID = ct.idsCompanyTypeID ";
+							$query .= "WHERE chrType = 'Customer' ";
+							$query .= "ORDER BY chrName";
+							$customers = mysql_query($query);
+							
+							// Get Part Numbers
+							$query = "SELECT chrPartNumber FROM tblPart ";
+							$query .= "ORDER BY chrPartNumber";
+							$partNumbers = mysql_query($query);
+							
+							// Get Revisions
+							$query = "SELECT chrRevision FROM tblRevision ";
+							$query .= "ORDER BY chrRevision";
+							$revisions = mysql_query($query);
+							
+							// Get operations
+							$query = "SELECT intOperationNumber ";
+						    $query .= "FROM tblOperationNumber ";
+							$query .= "ORDER BY intOperationNumber";
+							$operations = mysql_query($query);
+							
+							// Get machines
+							$query = "SELECT chrMachineName FROM tblMachine ";
+							$query .= "ORDER BY chrMachineName";
+							$machines = mysql_query($query);							
+						?>
+						
+						
 						<label id="lblCustomer" for="customer">Customer:</label>
 						<select id="cboCustomer" name="customer">					
 							<option>Select a Customer...</option>
 							<!-- import values from database -->
 							<?php
-								mysql_connect('infoserver.cecs.csulb.edu','nscott','egiJ4rai') or die(mysql_error());
-								mysql_select_db('nscott') or die(mysql_error());
-								
-								$customers = "SELECT idsCompanyID, chrName FROM tblCompany c".
-											  "INNER JOIN tblCompany_CompanyType cct ".
-											  "ON c.idsCompanyID = cct.idsCompanyID ".
-											  "INNER JOIN tblCompanyType ct ".
-											  "ON cct.idsCompanyTypeID = ct.idsCompanyTypeID ".
-											  "WHERE chrType = Customer";
-								$result = mysql_query($getID);
-								while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+								while($row = mysql_fetch_array($customers))
 								{
 									echo "<option>".$row['chrName']."</option>";
-									echo "<option>test</option>";
 								}
 							?>
 						</select>
@@ -72,6 +99,12 @@
 						<select id="cboPartNumber" name="partNumber">					
 							<option>Select a Part Number...</option>
 							<!-- import values from database -->
+							<?php
+								while($row = mysql_fetch_array($partNumbers))
+								{
+									echo "<option>".$row['chrPartNumber']."</option>";
+								}
+							?>
 						</select>
 						<br />
 						
@@ -79,6 +112,12 @@
 						<select id="cboRevision" name="revision">					
 							<option>Select a Revision...</option>
 							<!-- import values from database -->
+							<?php
+								while($row = mysql_fetch_array($revisions))
+								{
+									echo "<option>".$row['chrRevision']."</option>";
+								}
+							?>
 						</select>
 						<br />
 						
@@ -86,6 +125,12 @@
 						<select id="cboOperation" name="operation">					
 							<option>Select an Operation...</option>
 							<!-- import values from database -->
+							<?php
+								while($row = mysql_fetch_array($operations))
+								{
+									echo "<option>".$row['intOperationNumber']."</option>";
+								}
+							?>
 						</select>
 						<br />
 						
@@ -93,20 +138,25 @@
 						<select id="cboMachine" name="machine">					
 							<option>Select a Machine...</option>
 							<!-- import values from database -->
+							<?php
+								while($row = mysql_fetch_array($machines))
+								{
+									echo "<option>".$row['chrMachineName']."</option>";
+								}
+							?>
 						</select>
 						<br />
 						
 						<label id="lblCodeFile" for="codeFile">Code File:</label>
-						<input id="txtCodeFile" name="codeFile" size="40"></input>
-						<button id="btnBrowseCode" name="browseCode">Browse...</button>
+						<input type="file" id="ofdCodeFile" name="codeFile" size="40"></input>
 						<br />
 						
 						<label id="lblGeometryFile" for="geomertyFile">Geometry File:</label>
-						<input id="txtGeometryFile" name="geometryFile" size="40"></input>
-						<button id="btnBrowseGeometry" name="browseGeometry">Browse...</button>
+						<input type="file" id="ofdGeometryFile" name="geometryFile" size="40"></input>
 						<br />
 						
-						<input type="button" id="btnSubmit" value="Submit" style="font-size: 1.15em; margin-left:19%"></input>
+						
+						<input type="button" id="btnSubmit" value="Submit" style="font-size: .8em; margin-left:19%"></input>
 					</FORM>
 				</div>
 			</div>

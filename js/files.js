@@ -13,19 +13,17 @@ downloadElements[9] = "cboMachine";
 
 var uploadElements = new Array();
 uploadElements[0] = "lblCodeFile";
-uploadElements[1] = "txtCodeFile";
-uploadElements[2] = "btnBrowseCode";
+uploadElements[1] = "ofdCodeFile";
 uploadElements[3] = "lblGeometryFile";
-uploadElements[4] = "txtGeometryFile";
-uploadElements[5] = "btnBrowseGeometry";
+uploadElements[4] = "ofdGeometryFile";
 
 
 function body_OnLoad()
 {
 	var element;
 	
-	message.style.visibility = "hidden";
-
+	document.getElementById('message').style.visibility = "hidden";
+	
 	for (element in downloadElements)
 	{	
 		document.getElementById(downloadElements[element]).style.visibility = "hidden";
@@ -36,14 +34,14 @@ function body_OnLoad()
 		document.getElementById(uploadElements[element]).style.visibility = "hidden";
 	}
 	
-	btnSubmit.style.visibility = "hidden";
+	document.getElementById('btnSubmit').style.visibility = "hidden";
 }
 
 function chooseDownload_Click()
 {
 	var element;
 	
-	message.style.visibility = "visible";
+	document.getElementById('message').style.visibility = "visible";
 
 	for (element in downloadElements)
 	{	
@@ -55,14 +53,15 @@ function chooseDownload_Click()
 		document.getElementById(uploadElements[element]).style.visibility = "hidden";
 	}
 	
-	btnSubmit.style.visibility = "visible";
-	btnSubmit.value = "Download";
+	document.getElementById('btnSubmit').style.visibility= "visible";
+	document.getElementById('btnSubmit').value = "Download";
 }
 
 function chooseUpload_Click()
 {
 	var element;
-	message.style.visibility = "visible";
+	
+	document.getElementById('message').style.visibility = "visible";
 	
 	for (element in downloadElements)
 	{	
@@ -74,8 +73,7 @@ function chooseUpload_Click()
 		document.getElementById(uploadElements[element]).style.visibility = "visible";
 	}
 	
-	btnSubmit.style.visibility = "visible";
-	
-	btnSubmit.value = "Upload";
+	document.getElementById('btnSubmit').style.visibility = "visible";	
+	document.getElementById('btnSubmit').value = "Upload";
 
 }
